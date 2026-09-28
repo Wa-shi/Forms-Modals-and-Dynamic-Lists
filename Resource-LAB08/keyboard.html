@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task 1: Keyboard Events</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #f5f5f5; }
+      .panel { width: 420px; margin: 40px auto; padding: 24px; background: #fff; border-radius: 8px; text-align: center; }
+      #lastKey { font-size: 48px; font-weight: bold; margin: 12px 0; min-height: 56px; }
+      #enterCount { font-size: 18px; }
+    </style>
+  </head>
+  <body>
+    <!--
+      TASK 1: KEYBOARD EVENTS AND THE EVENT OBJECT (5 pts)
+      Follow the numbered steps in the LAB 8 sheet. Save your finished file as Q1.html.
+
+      STEP 2: The HTML below is already written for you. Do NOT change the ids:
+              lastKey, enterCount.
+    -->
+    <div class="panel">
+      <p>Press any key on your keyboard</p>
+      <p id="lastKey">-</p>
+      <p id="enterCount">Enter pressed 0 times</p>
+    </div>
+
+    <script>
+      // STEP 3: Select the 2 elements with document.getElementById(): lastKey, enterCount
+      //         Name the second one enterText (the name enterCount is used below for the number).
+      const lastKey = document.getElementById("lastKey");
+      const enterText = document.getElementById("enterCount");
+
+      // STEP 4: Listen for "keydown" on document. The handler receives the event object: (event) => { ... }
+      //         a) console.log(event) once and look inside it in DevTools              (1 pt)
+      //         b) show event.key inside lastKey                                     (1 pt)
+      let enterCount = 0;
+        document.addEventListener("keydown", (event) => {
+            console.log(event);
+            lastKey.textContent = event.key;
+
+      // STEP 5: Inside the same handler:                                             (2 pts)
+      //         if event.key is "Enter": enterCount++ and update enterText
+      //         ("Enter pressed 1 time", "Enter pressed 2 times")
+      if (event.key === "Enter") {
+          enterCount++;
+          if (enterCount === 1) {
+          enterText.textContent = "Enter pressed 1 time";
+            } else {
+              enterText.textContent = `Enter pressed ${enterCount} times`;
+            }
+          }
+
+      // STEP 6: Inside the same handler:                                             (1 pt)
+      //         if event.key is "Escape": reset enterCount to 0, lastKey to "-", and update enterText
+          if (event.key === "Escape") {
+            enterCount = 0;
+            lastKey.textContent = "-";
+            enterText.textContent = "Enter pressed 0 times";
+          }
+        });
+
+      // STEP 7: Test: press a, A, Shift, ArrowLeft, Enter (3 times), then Escape (see the LAB 8 sheet).
+    </script>
+  </body>
+</html>

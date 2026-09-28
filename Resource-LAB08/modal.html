@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task 3: Modal Dialog</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #f5f5f5; text-align: center; padding-top: 40px; }
+      button { padding: 10px 24px; font-size: 16px; cursor: pointer; margin: 4px; }
+      dialog { border: none; border-radius: 8px; padding: 24px; width: 320px; }
+      /* STEP 7: style the dim layer behind the dialog here (dialog::backdrop) */
+
+      #status { font-size: 18px; margin-top: 20px; }
+    </style>
+  </head>
+  <body>
+    <!--
+      TASK 3: MODAL DIALOG (4 pts)
+      Follow the numbered steps in the LAB 8 sheet. Save your finished file as Q3.html.
+
+      STEP 2: Create these elements below this comment.                                   (1 pt)
+              a) a button with id="openBtn" and text "Delete my account"
+              b) a <dialog> with id="confirmDlg" that contains:
+              - an <h2> "Are you sure?"
+              - a <p> "This cannot be undone."
+              - a button id="cancelBtn" (text "Cancel") and a button id="yesBtn" (text "Yes, delete")
+              c) a paragraph with id="status" and the text "Account is active"
+    -->
+                <button id="openBtn">Delete my account</button>
+                
+                <dialog id="confirmDlg">
+                  <h2>Are you sure?</h2>
+                  <p>This cannot be undone.</p>
+                  <button id="cancelBtn">Cancel</button>
+                  <button id="yesBtn">Yes, delete</button>
+                </dialog>
+                
+                <p id="status">Account is active</p>
+                
+                
+    <script>
+      // STEP 3: Select openBtn, confirmDlg, cancelBtn, yesBtn and status with document.getElementById().
+          const openBtn = document.getElementById("openBtn");
+          const confirmDlg = document.getElementById("confirmDlg");
+          const cancelBtn = document.getElementById("cancelBtn");
+          const yesBtn = document.getElementById("yesBtn");
+          const status = document.getElementById("status");
+
+      // STEP 4: openBtn click: open the dialog as a modal with confirmDlg.showModal()        (1 pt)
+      openBtn.addEventListener("click", () => {
+          confirmDlg.showModal();
+        });
+
+      // STEP 5: cancelBtn click: close the dialog.
+      //         yesBtn click: set status to "Account deleted", then close the dialog.         (1 pt)
+      cancelBtn.addEventListener("click", () => {
+          confirmDlg.close();
+        });
+
+        yesBtn.addEventListener("click", () => {
+          status.textContent = "Account deleted";
+          confirmDlg.close();
+        });
+
+      // STEP 6: Click on the dim backdrop closes the dialog.                                  (1 pt)
+      //         Hint: listen for "click" on confirmDlg; if (event.target === confirmDlg) close it.
+      //         Why does this only close on the backdrop and not when you click the <h2>? Tell your TA.
+        confirmDlg.addEventListener("click", (event) => {
+            if (event.target === confirmDlg) {
+              confirmDlg.close();
+            }
+          });
+
+      // STEP 7: Add a dialog::backdrop rule in the <style> above (e.g. background: rgb(0 0 0 / 0.5)).
+
+      // STEP 8: Test: open + Cancel, open + Escape key, open + click outside, open + Yes.
+    </script>
+  </body>
+</html>

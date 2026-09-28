@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task 4: Shopping List App</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #f5f5f5; }
+      .app { width: 440px; margin: 40px auto; padding: 24px; background: #fff; border-radius: 8px; }
+      form { display: flex; gap: 8px; }
+      #itemInput { flex: 1; padding: 8px; font-size: 16px; border: 1px solid #999; border-radius: 4px; }
+      button { padding: 8px 16px; font-size: 15px; cursor: pointer; }
+      .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      .error { color: #c0392b; font-size: 14px; min-height: 18px; margin: 4px 0; }
+      .invalid { border: 2px solid #c0392b !important; }
+      #list { list-style: none; padding: 0; }
+      #list li { display: flex; justify-content: space-between; align-items: center;
+                 padding: 8px; border-bottom: 1px solid #eee; }
+      #list li.done span { text-decoration: line-through; color: #999; }
+      .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+      dialog { border: none; border-radius: 8px; padding: 24px; }
+      dialog::backdrop { background: rgb(0 0 0 / 0.5); }
+    </style>
+  </head>
+  <body>
+    <!--
+      TASK 4: SHOPPING LIST APP (10 pts)
+      Follow the numbered steps in the LAB 8 sheet. Save your finished file as Q4.html.
+
+      STEP 2: The HTML below is already written for you. Do NOT change the ids:
+              addForm, itemInput, item-err, list, count, clearBtn, clearDlg, cancelClear, confirmClear.
+    -->
+    <div class="app">
+      <h1>Shopping List</h1>
+
+      <form id="addForm" novalidate>
+        <label for="itemInput" class="visually-hidden">New item</label>
+        <input id="itemInput" type="text" placeholder="e.g. Milk" aria-describedby="item-err" />
+        <button type="submit">Add</button>
+      </form>
+      <p class="error" id="item-err"></p>
+
+      <ul id="list"></ul>
+
+      <div class="footer">
+        <span id="count">0 items</span>
+        <button id="clearBtn">Clear all</button>
+      </div>
+    </div>
+
+    <dialog id="clearDlg">
+      <h2>Clear the whole list?</h2>
+      <p>All items will be removed.</p>
+      <button id="cancelClear">Cancel</button>
+      <button id="confirmClear">Clear all</button>
+    </dialog>
+
+    <script>
+      // STEP 3: Select all 9 elements with document.getElementById().
+      //         Names: addForm, itemInput, itemErr, list, count, clearBtn, clearDlg, cancelClear, confirmClear
+        const addForm = document.getElementById("addForm");
+        const itemInput = document.getElementById("itemInput");
+        const itemErr = document.getElementById("item-err");
+        const list = document.getElementById("list");
+        const count = document.getElementById("count");
+        const clearBtn = document.getElementById("clearBtn");
+        const clearDlg = document.getElementById("clearDlg");
+        const cancelClear = document.getElementById("cancelClear");
+        const confirmClear = document.getElementById("confirmClear");
+
+      // STEP 4: The state (the data) is given to you. The page is ALWAYS drawn from this array.
+      let items = ["Milk", "Eggs"];
+
+
+      // STEP 5: Write a function render()                                                   (3 pts)
+      //         a) clear the list: list.innerHTML = "";
+      //         b) items.forEach((text, i) => { ... }) and for each item:
+      //            - create an <li>
+      //            - create a <span>, set its textContent to text (NOT innerHTML: why? tell your TA)
+      //            - create a <button> "Delete" and set button.dataset.index = i
+      //            - append the span and the button to the li, and the li to the list
+      //         c) update count: "0 items", "1 item", "2 items" (singular for 1!)
+        function render() {
+            list.innerHTML = "";
+
+            items.forEach((text, i) => {
+              const li = document.createElement("li");
+
+              const span = document.createElement("span");
+              span.textContent = text;
+
+              const delBtn = document.createElement("button");
+              delBtn.textContent = "Delete";
+              delBtn.dataset.index = i;
+
+              li.append(span, delBtn);
+              list.append(li);
+            });
+
+            if (items.length === 1) {
+              count.textContent = "1 item";
+            } else {
+              count.textContent = `${items.length} items`;
+            }
+          }
+
+      // STEP 6: Call render() once so "Milk" and "Eggs" show when the page loads.
+          render();
+
+            // STEP 7: Add an item. Listen for "submit" on addForm
+
+      // STEP 7: Add an item. Listen for "submit" on addForm:                                (3 pts)
+      //         a) event.preventDefault()
+      //         b) const text = itemInput.value.trim();
+      //         c) if text is empty          -> show "Please type an item"                in itemErr
+      //            if text.length > 40       -> show "Item must be 40 characters or fewer" in itemErr
+      //            (also add class "invalid" to itemInput, and stop with return)
+      //         d) otherwise: clear the error, items.push(text), render(),
+      //            then itemInput.value = "" and itemInput.focus()
+      //         The Enter key already submits the form: you do not need a keydown listener here.
+                addForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const text = itemInput.value.trim();
+
+                if (text === "") {
+                  itemErr.textContent = "Please type an item";
+                  itemInput.classList.add("invalid");
+                  return;
+                }
+
+                if (text.length > 40) {
+                  itemErr.textContent = "Item must be 40 characters or fewer";
+                  itemInput.classList.add("invalid");
+                  return;
+                }
+
+                itemErr.textContent = "";
+                itemInput.classList.remove("invalid");
+
+                items.push(text);
+                render();
+
+                itemInput.value = "";
+                itemInput.focus();
+              });
+
+      // STEP 8: Delete with EVENT DELEGATION: ONE listener on the <ul id="list">.            (2 pts)
+      //         const btn = event.target.closest("button"); if (!btn) return;
+      //         items.splice(Number(btn.dataset.index), 1); render();
+      //         Why can't we add a listener to each Delete button once at the top of the file?
+        list.addEventListener("click", (event) => {
+            const btn = event.target.closest("button");
+            if (!btn) return;
+
+            items.splice(Number(btn.dataset.index), 1);
+            render();
+          });
+
+          // STEP 9: Clear all with a modal
+          clearBtn.addEventListener("click", () => {
+            clearDlg.showModal();
+          });
+
+          cancelClear.addEventListener("click", () => {
+            clearDlg.close();
+          });
+
+          confirmClear.addEventListener("click", () => {
+            items = [];
+            render();
+            clearDlg.close();
+          });
+
+      // STEP 9: Clear all with a modal.                                                      (2 pts)
+      //         clearBtn click     -> clearDlg.showModal()
+      //         cancelClear click  -> clearDlg.close()
+      //         confirmClear click -> items = []; render(); clearDlg.close();
+
+
+      // STEP 10: Test with the checklist in the LAB 8 sheet.
+
+      // STEP 11 (CHALLENGE, no points):
+      //   a) Press "/" anywhere to jump into the input (keydown on document, event.preventDefault(),
+      //      itemInput.focus()). Do not trigger it while the user is already typing in the input.
+      //   b) Click an item's text to mark it done (toggle class "done" on the li).
+      //      To survive render(), store items as objects: { text: "Milk", done: false }.
+    </script>
+  </body>
+</html>
